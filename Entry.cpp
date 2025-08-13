@@ -7,7 +7,8 @@ using namespace std;
 class concept
 {
     public:
-        string name, serial, author, status;
+        string name, serial, author;
+        int quantity,borrow;
 
         void input(){
             cout << "Book Name: ";
@@ -16,11 +17,16 @@ class concept
             getline(cin, serial);
             cout << "Book Author: ";
             getline(cin, author);
-            status = "Available" ;
+            cout << "Book Quantity: ";
+            cin >> quantity;
+            cin.ignore();
+            borrow = 0;
             cout << endl;
 
         }
 };
+
+
 
 vector <concept> books;
 int main()
@@ -52,18 +58,20 @@ int main()
     }
     case 2:
         cout << left
-             << setw(20) << "Book Name"
+             << setw(30) << "Book Name"
              << setw(15) << "Book Serial"
-             << setw(20) << "Book Author"
-             << setw(15) << "Availability"
+             << setw(30) << "Book Author"
+             << setw(15) << "Available"
+             << setw(15) << "Borrowed"
              << endl << endl;
 
         for (auto &b : books) {
             cout << left
-                 << setw(20) << b.name
+                 << setw(30) << b.name
                  << setw(15) << b.serial
-                 << setw(20) << b.author
-                 << setw(15) << b.status
+                 << setw(30) << b.author
+                 << setw(15) << b.quantity
+                 << setw(15) << b.borrow
                  << endl;
         }
         cout << endl;
@@ -97,38 +105,78 @@ int main()
             }
         return main();
     case 4:
+        if (books.empty() == 1){
+            cout << "No Books are Found!!!" << endl;
+            return main();
+        }
         cout << left
-             << setw(20) << "Book Name"
+             << setw(30) << "Book Name"
              << setw(15) << "Book Serial"
-             << setw(20) << "Book Author"
-             << setw(15) << "Availability"
+             << setw(30) << "Book Author"
+             << setw(15) << "Available"
+             << setw(15) << "Borrowed"
              << endl << endl;
 
         for (auto &b : books) {
             cout << left
-                 << setw(20) << b.name
+                 << setw(30) << b.name
                  << setw(15) << b.serial
-                 << setw(20) << b.author
-                 << setw(15) << b.status
+                 << setw(30) << b.author
+                 << setw(15) << b.quantity
+                 << setw(15) << b.borrow
                  << endl;
         }
-        cout << endl << "Serial of the Book wanna Borrow or Return: ";
+        bandr:
+        cout << endl << "Serial of the Book: ";
         cin >> val;
-        for (int i=0; i<books.size(); i++){
-            if (val == books[i].serial){
-                if (books[i].status == "Available"){
-                    books[i].status = "Borrowed";
-                    cout << "Book Borrowed...." << endl;
+        Borrow:
+        cout << "1. Return.\n2. Borrow.\nChoose: ";
+        cin >> choose;
+        switch(choose)
+        {
+        case 1:
+            for (int i=0; i<books.size(); i++){
+                if (val == books[i].serial){
+                    if(books[i].borrow == 0){
+                        cout << "No Books Borrowed Before!!!" << endl;
+                        goto bandr;
 
-                }else{
-                    books[i].status = "Available";
-                    cout << "Book Returned...." << endl;
+                    }
+                    books[i].borrow--;
+                    books[i].quantity++;
+                    cout << "Book Returned Successfully......" << endl;
+                    return main();
                 }
-                break;
             }
+            cout << "Book Not Found!!!" << endl;
+            goto bandr;
+        case 2:
+            for (int i=0; i<books.size(); i++){
+                if (val == books[i].serial){
+                    if(books[i].quantity == 0){
+                        cout << "No Books are Available!!!" << endl;
+                        goto bandr;
+
+                    }
+                    books[i].borrow++;
+                    books[i].quantity--;
+                    cout << "Book Borrowed Successfully......" << endl;
+                    break;
+                }
+            }
+            cout << "Book Not Found!!!" << endl;
+            goto bandr;
+        default:
+            cout << "Choose again!!" << endl;
+            goto Borrow;
+            break;
         }
         return main();
-    default:
+    case 5:
+        cout << "System Shutting down.............." ;
         break;
+    default:
+        cout << "Choose Again!!" << endl;
+        return main();
     }
 }
